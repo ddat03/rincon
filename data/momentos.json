@@ -1,0 +1,29 @@
+[
+  {
+    "id": "conocerse",
+    "fecha": "2024-11-09",
+    "titulo": "Nos conocimos",
+    "descripcion": "El día en que todo esto empezó. Reemplaza este texto por cómo lo recuerdas tú.",
+    "foto": "fotos/momentos/conocerse.webp",
+    "nota": "Un recuerdo personal de ese día: qué llevabas puesto, de qué hablaron, qué pensaste.",
+    "lugar": null
+  },
+  {
+    "id": "primer-beso",
+    "fecha": "2024-12-10",
+    "titulo": "Fiestas de Quito — primer beso",
+    "descripcion": "En medio de la fiesta de la ciudad. Cámbialo por el detalle que quieras contar.",
+    "foto": "fotos/momentos/primer-beso.webp",
+    "nota": "Tu recuerdo de ese momento.",
+    "lugar": { "nombre": "Quito, Ecuador", "lat": -0.1806532, "lng": -78.4678382 }
+  },
+  {
+    "id": "empezamos",
+    "fecha": "2025-01-07",
+    "titulo": "Empezamos en serio",
+    "descripcion": "El día que decidieron que esto iba de verdad.",
+    "foto": "fotos/momentos/empezamos.webp",
+    "nota": "Por qué esa fecha, quién lo dijo primero, cómo se sintió.",
+    "lugar": null
+  }
+]

@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#2a0d18" />
+  <title>Nuestra Historia</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Lora:ital,wght@0,400;0,500;1,400&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Leaflet (mapa) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"
+    integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Navegación flotante -->
+  <nav class="nav" aria-label="Secciones">
+    <a href="#portada" data-label="Inicio" class="is-active"><span></span></a>
+    <a href="#carta" data-label="La carta"><span></span></a>
+    <a href="#historia" data-label="Nuestra historia"><span></span></a>
+    <a href="#mapa" data-label="Nuestro mapa"><span></span></a>
+    <a href="#galeria" data-label="Galería"><span></span></a>
+    <a href="#cierre" data-label="Cierre"><span></span></a>
+  </nav>
+
+  <!-- 1. PORTADA -->
+  <section id="portada" class="portada">
+    <canvas class="portada__canvas" aria-hidden="true"></canvas>
+    <div class="portada__contenido">
+      <p class="portada__saludo">Hola,</p>
+      <h1 class="portada__nombre" data-config="nombre">…</h1>
+      <p class="portada__sub" data-config="subtituloPortada">…</p>
+
+      <div class="contador" aria-live="off">
+        <div class="contador__item"><b data-cont="dias">0</b><span>días</span></div>
+        <div class="contador__item"><b data-cont="horas">0</b><span>horas</span></div>
+        <div class="contador__item"><b data-cont="min">0</b><span>min</span></div>
+        <div class="contador__item"><b data-cont="seg">0</b><span>seg</span></div>
+      </div>
+      <p class="contador__etiqueta" data-config="etiquetaContador">…</p>
+
+      <button class="btn btn--entrar" type="button" data-config-text="botonPortada" data-goto="#carta">
+        Toca para entrar
+      </button>
+    </div>
+    <div class="portada__scroll" aria-hidden="true">▾</div>
+  </section>
+
+  <!-- 2. LA CARTA -->
+  <section id="carta" class="seccion carta">
+    <h2 class="titulo-seccion">La carta</h2>
+    <div class="sobre" id="sobre" role="button" tabindex="0" aria-expanded="false"
+         aria-label="Abrir la carta">
+      <div class="sobre__tapa"></div>
+      <div class="sobre__cuerpo"></div>
+      <div class="sobre__papel">
+        <p class="sobre__pista">Toca el sobre</p>
+      </div>
+      <div class="sobre__corazon">♥</div>
+    </div>
+
+    <article class="carta-texto" id="cartaTexto" hidden>
+      <h3 class="carta-texto__encabezado" data-carta="encabezado">…</h3>
+      <div class="carta-texto__cuerpo" data-carta="parrafos"></div>
+      <p class="carta-texto__firma" data-carta="firma"></p>
+      <button class="btn btn--ghost" type="button" data-cerrar-carta>Cerrar la carta</button>
+    </article>
+  </section>
+
+  <!-- 3. NUESTRA HISTORIA -->
+  <section id="historia" class="seccion historia">
+    <h2 class="titulo-seccion">Nuestra historia</h2>
+    <ol class="timeline" id="timeline"></ol>
+  </section>
+
+  <!-- 4. NUESTRO MAPA -->
+  <section id="mapa" class="seccion mapa">
+    <h2 class="titulo-seccion">Nuestro mapa</h2>
+    <p class="mapa__intro">Los lugares que ya son nuestros.</p>
+    <div class="mapa__lienzo" id="map"></div>
+  </section>
+
+  <!-- 5. GALERÍA -->
+  <section id="galeria" class="seccion galeria">
+    <h2 class="titulo-seccion">Galería</h2>
+    <div class="galeria__grid" id="galeriaGrid"></div>
+  </section>
+
+  <!-- 6. CIERRE -->
+  <section id="cierre" class="seccion cierre">
+    <div class="cierre__contenido">
+      <h2 class="titulo-seccion" data-config="cierre.titulo">…</h2>
+      <p class="cierre__mensaje" data-config="cierre.mensaje">…</p>
+      <div class="contador contador--mini" aria-hidden="true">
+        <div class="contador__item"><b data-cont="dias">0</b><span>días</span></div>
+        <div class="contador__item"><b data-cont="horas">0</b><span>horas</span></div>
+        <div class="contador__item"><b data-cont="min">0</b><span>min</span></div>
+        <div class="contador__item"><b data-cont="seg">0</b><span>seg</span></div>
+      </div>
+      <div class="cierre__botones">
+        <button class="btn btn--ghost" type="button" data-goto="#carta">Volver a leer la carta</button>
+        <button class="btn" type="button" data-goto="#portada">Volver al inicio</button>
+      </div>
+      <p class="firma-autor" data-config="firmaAutor">Creado por Diego Aleman</p>
+    </div>
+  </section>
+
+  <!-- Lightbox de la galería -->
+  <div class="lightbox" id="lightbox" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-label="Visor de fotos">
+    <button class="lightbox__btn lightbox__btn--cerrar" type="button" aria-label="Cerrar">✕</button>
+    <button class="lightbox__btn lightbox__btn--prev" type="button" aria-label="Anterior">‹</button>
+    <button class="lightbox__btn lightbox__btn--next" type="button" aria-label="Siguiente">›</button>
+    <figure class="lightbox__fig">
+      <div class="lightbox__media" id="lightboxMedia"></div>
+      <figcaption class="lightbox__caption" id="lightboxCaption"></figcaption>
+    </figure>
+  </div>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"
+    integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

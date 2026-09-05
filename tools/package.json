@@ -1,0 +1,12 @@
+{
+  "name": "regalo-tools",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Utilidades de build (optimización de imágenes) para la página de regalo",
+  "scripts": {
+    "optimize": "node optimizar-imagenes.js"
+  },
+  "dependencies": {
+    "sharp": "^0.33.5"
+  }
+}
