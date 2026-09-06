@@ -19,8 +19,8 @@
     "credito": "Música: \"Touching Story\" — Kevin MacLeod (incompetech.com) · Licencia CC BY 4.0"
   },
   "fondo": {
-    "imagen": "",
-    "opacidad": 0.5
+    "imagen": "fotos/fondo.webp",
+    "opacidad": 0.9
   },
   "cierre": {
     "titulo": "Y esto apenas empieza",

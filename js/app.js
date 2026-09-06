@@ -286,6 +286,170 @@
   }
 
   /* =========================================================
+     PORTADA — decide: corazón 3D (WebGL) o galaxia 2D (fallback)
+     ========================================================= */
+  function hayWebGL() {
+    try {
+      var c = document.createElement('canvas');
+      return !!(window.WebGLRenderingContext && (c.getContext('webgl') || c.getContext('experimental-webgl')));
+    } catch (e) { return false; }
+  }
+
+  function iniciarPortada() {
+    var canvas = $('.portada__canvas');
+    if (!canvas) return;
+    if (window.THREE && hayWebGL()) {
+      alEntrar(function () {
+        try { corazon3D(canvas); }
+        catch (e) { console.error('corazón 3D falló, uso galaxia 2D', e); iniciarFondoPortada(); }
+      });
+    } else {
+      iniciarFondoPortada();
+    }
+  }
+
+  /* Corazón de partículas con podio brillante (estilo "corazón galáctico") */
+  function corazon3D(canvas) {
+    var T = window.THREE;
+    var renderer = new T.WebGLRenderer({ canvas: canvas, alpha: true, antialias: false, powerPreference: 'low-power' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
+    var scene = new T.Scene();
+    var camara = new T.PerspectiveCamera(58, 1, 0.1, 100);
+    camara.position.set(0, 0.9, 13);
+
+    function ptoCorazon(t) {
+      return [
+        16 * Math.pow(Math.sin(t), 3),
+        13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)
+      ];
+    }
+    function sprite(stops) {
+      var c = document.createElement('canvas'); c.width = c.height = 64;
+      var g = c.getContext('2d');
+      var grd = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+      stops.forEach(function (s) { grd.addColorStop(s[0], s[1]); });
+      g.fillStyle = grd; g.fillRect(0, 0, 64, 64);
+      return new T.CanvasTexture(c);
+    }
+    var texPunto = sprite([[0, 'rgba(255,255,255,1)'], [0.3, 'rgba(255,228,238,0.85)'], [1, 'rgba(255,255,255,0)']]);
+    var grupo = new T.Group(); scene.add(grupo);
+
+    var esc = 0.22, off = 6;
+    var area = window.innerWidth * window.innerHeight;
+    var N = Math.max(2600, Math.min(Math.round(area / 135), 8500));
+    var posN = new Float32Array(N * 3), colN = new Float32Array(N * 3);
+    var cGold = new T.Color('#ffd7a8'), cRosa = new T.Color('#ff7fae'), cVino = new T.Color('#d76b9a'), cBlanco = new T.Color('#ffffff');
+    for (var i = 0; i < N; i++) {
+      var t = Math.random() * Math.PI * 2;
+      var p = ptoCorazon(t);
+      var borde = i < N * 0.42;
+      var k = borde ? (0.92 + Math.random() * 0.1) : Math.pow(Math.random(), 0.55) * 0.95;
+      var jx = borde ? (Math.random() - 0.5) * 0.7 : 0;
+      var jy = borde ? (Math.random() - 0.5) * 0.7 : 0;
+      posN[i * 3] = (p[0] * k + jx) * esc;
+      posN[i * 3 + 1] = (p[1] * k + jy + off) * esc;
+      posN[i * 3 + 2] = (Math.random() - 0.5) * (borde ? 0.8 : 2.7) * esc * (1.05 - k * 0.5);
+      var col = borde ? (Math.random() < 0.5 ? cGold : cBlanco) : (Math.random() < 0.62 ? cRosa : cVino);
+      colN[i * 3] = col.r; colN[i * 3 + 1] = col.g; colN[i * 3 + 2] = col.b;
+    }
+    var geoN = new T.BufferGeometry();
+    geoN.setAttribute('position', new T.BufferAttribute(posN, 3));
+    geoN.setAttribute('color', new T.BufferAttribute(colN, 3));
+    var corazon = new T.Points(geoN, new T.PointsMaterial({
+      size: 0.11, map: texPunto, vertexColors: true, transparent: true, depthWrite: false, blending: T.AdditiveBlending
+    }));
+    grupo.add(corazon);
+    grupo.position.y = 4.3;
+
+    // chispas que suben desde el podio
+    var CH = 170;
+    var posC = new Float32Array(CH * 3), velC = new Float32Array(CH);
+    function nuevaChispa(j, ini) {
+      // sin chispas en el centro (para no formar una línea sobre el nombre)
+      posC[j * 3] = (Math.random() < 0.5 ? -1 : 1) * (0.7 + Math.random() * 2.4);
+      posC[j * 3 + 1] = (ini ? Math.random() * 6 - 3.4 : -3.4);
+      posC[j * 3 + 2] = (Math.random() - 0.5) * 2.2;
+      velC[j] = 0.005 + Math.random() * 0.012;
+    }
+    for (var c1 = 0; c1 < CH; c1++) nuevaChispa(c1, true);
+    var geoC = new T.BufferGeometry();
+    geoC.setAttribute('position', new T.BufferAttribute(posC, 3));
+    var chispas = new T.Points(geoC, new T.PointsMaterial({
+      size: 0.075, map: texPunto, color: new T.Color('#ffe3c4'), transparent: true, opacity: 0.6, depthWrite: false, blending: T.AdditiveBlending
+    }));
+    scene.add(chispas);
+
+    // podio brillante
+    var texPodio = sprite([[0, 'rgba(255,214,184,0.95)'], [0.45, 'rgba(232,120,165,0.4)'], [1, 'rgba(232,120,165,0)']]);
+    var podio = new T.Mesh(
+      new T.PlaneGeometry(9 * esc, 9 * esc),
+      new T.MeshBasicMaterial({ map: texPodio, transparent: true, depthWrite: false, blending: T.AdditiveBlending })
+    );
+    podio.rotation.x = -Math.PI / 2 + 0.26;
+    podio.position.y = -3.4;
+    podio.scale.set(1.9, 1, 1);
+    scene.add(podio);
+
+    // estrellas de fondo
+    var ST = 650;
+    var posS = new Float32Array(ST * 3);
+    for (var s2 = 0; s2 < ST; s2++) {
+      posS[s2 * 3] = (Math.random() - 0.5) * 70;
+      posS[s2 * 3 + 1] = (Math.random() - 0.5) * 46;
+      posS[s2 * 3 + 2] = -12 - Math.random() * 34;
+    }
+    var geoS = new T.BufferGeometry();
+    geoS.setAttribute('position', new T.BufferAttribute(posS, 3));
+    var estrellas = new T.Points(geoS, new T.PointsMaterial({
+      size: 0.16, map: texPunto, color: new T.Color('#ffeede'), transparent: true, opacity: 0.5, depthWrite: false, blending: T.AdditiveBlending
+    }));
+    scene.add(estrellas);
+
+    function medir() {
+      var w = canvas.clientWidth || window.innerWidth;
+      var h = canvas.clientHeight || window.innerHeight;
+      renderer.setSize(w, h, false);
+      camara.aspect = w / h;
+      camara.position.z = w < 560 ? 16.5 : 13;
+      camara.updateProjectionMatrix();
+    }
+    medir();
+    var rz;
+    window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(medir, 200); });
+
+    var reloj = 0, visible = true, raf;
+    function frame() {
+      raf = requestAnimationFrame(frame);
+      if (!visible) return;
+      reloj += 0.016;
+      if (!PREFIERE_MENOS_MOVIMIENTO) {
+        grupo.rotation.y = Math.sin(reloj * 0.16) * 0.55;
+        corazon.material.size = 0.1 + Math.sin(reloj * 1.5) * 0.014;
+        podio.material.opacity = 0.72 + Math.sin(reloj * 1.5) * 0.16;
+        var a = geoC.attributes.position.array;
+        for (var j = 0; j < CH; j++) {
+          a[j * 3 + 1] += velC[j];
+          a[j * 3] += Math.sin((reloj + j) * 0.6) * 0.002;
+          if (a[j * 3 + 1] > 4) nuevaChispa(j, false);
+        }
+        geoC.attributes.position.needsUpdate = true;
+        estrellas.rotation.z = reloj * 0.005;
+        camara.position.x = Math.sin(reloj * 0.11) * 0.7;
+      }
+      camara.lookAt(0, 3.7, 0);
+      renderer.render(scene, camara);
+    }
+    frame();
+
+    document.addEventListener('visibilitychange', function () { visible = !document.hidden; });
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function (es) {
+        es.forEach(function (e) { visible = e.isIntersecting; });
+      }, { threshold: 0.02 }).observe($('#portada'));
+    }
+  }
+
+  /* =========================================================
      FONDO AMBIENTAL — wash de color + pétalos (o una imagen)
      ========================================================= */
   function iniciarAmbiente(cfg) {
@@ -654,8 +818,9 @@
 
       if (it.tipo === 'video') {
         var v = document.createElement('video');
-        v.muted = true; v.playsInline = true; v.preload = 'metadata';
-        v.src = encodeURI(it.src) + '#t=0.5';
+        v.muted = true; v.playsInline = true; v.loop = true; v.autoplay = true;
+        v.preload = 'metadata'; v.setAttribute('muted', '');
+        v.src = encodeURI(it.src);
         fig.appendChild(v);
       } else {
         var img = document.createElement('img');
@@ -734,8 +899,9 @@
       var media;
       if (it.tipo === 'video') {
         media = document.createElement('video');
-        media.muted = true; media.playsInline = true; media.preload = 'metadata';
-        media.src = encodeURI(it.src) + '#t=0.5';
+        media.muted = true; media.playsInline = true; media.loop = true; media.autoplay = true;
+        media.preload = 'metadata'; media.setAttribute('muted', '');
+        media.src = encodeURI(it.src);
       } else {
         media = document.createElement('img');
         media.loading = 'lazy';
@@ -916,7 +1082,7 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     iniciarNavegacion();
-    iniciarFondoPortada();
+    iniciarPortada();
     construirLightbox();
     $all('.titulo-seccion').forEach(function (t) { t.classList.add('reveal'); revelar(t); });
 

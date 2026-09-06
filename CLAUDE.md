@@ -11,17 +11,18 @@ contenido personal vive en archivos JSON dentro de `/data`, no hardcodeado.
    default 0708). Al acertar: `dispararEntrada()` → arranca galaxia + música. Se
    recuerda en localStorage (`nh_entrada`). La galaxia y el `<audio>` quedan
    pausados con `alEntrar(cb)` hasta ese momento (el tap desbloquea el autoplay).
-1. **Portada** — galaxia en canvas (espiral con rotación diferencial + corazón de
-   estrellas, hecho a mano), nombre de ella, contador en vivo desde el 7-ene-2025.
-   Música de fondo opcional (`musica/cancion.mp3`, botón silenciar abajo-izq).
+1. **Portada** — corazón de partículas 3D (Three.js r128 vía cdnjs, con SRI) con podio
+   brillante y estrellas, estilo "corazón galáctico" en tonos rosa/dorado. Fallback:
+   `iniciarFondoPortada()` (galaxia 2D en canvas) si no hay WebGL/THREE. Nombre de ella
+   emergiendo de la base del corazón, contador en vivo, música de fondo.
 2. **La carta** — sobre CSS/SVG que se abre con tap y revela el texto de `data/carta.json`.
 3. **Nuestra historia** — línea de tiempo vertical desde `data/momentos.json`, con
    reveal por IntersectionObserver; alterna lados en escritorio.
 4. **Nuestro mapa** — Leaflet (CDN cdnjs, con SRI) + tiles OSM, un pin-corazón por
    momento con `lugar` que tenga coordenadas. Popup con foto, descripción y nota.
-5. **Galería** — grid masonry (CSS columns) desde `data/galeria.json`, thumbs con
-   lazy-load, reveal escalonado, lightbox propio (sin CDN) con teclado y swipe, soporta
-   video.
+5. **Galería** — dos carruseles 3D (mitad de las fotos giran en Y, mitad en X, animación
+   CSS + arrastre) + botón "Ver todas" que despliega el grid masonry completo. Lightbox
+   propio (sin CDN) con teclado y swipe. Los videos van en loop/autoplay (como gif).
 6. **Cierre** — mensaje final, contador repetido, botones volver.
 
 ## Fechas confirmadas
@@ -36,10 +37,18 @@ Paleta del plan: vino `#7a1f3d`, rosa `#b5495b`, dorado `#d4a056`, crema `#fdf3f
 Títulos en Dancing Script, cuerpo en Lora (Google Fonts). Animaciones suaves de scroll.
 Mobile-first (se abre primero desde el celular). Respeta `prefers-reduced-motion`.
 
+## Fondo
+
+Capa fija `#ambiente`: por defecto un wash de color animado + pétalos; si
+`config.json → fondo.imagen` tiene ruta (hoy `fotos/fondo.webp`, acuarela hecha por
+Diego en Gemini) usa esa imagen a `fondo.opacidad`. Portada y cierre con `mask-image`
+para fundirse con el fondo.
+
 ## Restricciones
 
 - Rutas **siempre relativas** (se sirve desde subpath `ddat03.github.io/repo/`).
-- Solo dos recursos externos: Google Fonts y Leaflet (cdnjs). Todo lo demás es propio.
+- Recursos externos: Google Fonts, Leaflet (cdnjs, SRI) y Three.js r128 (cdnjs, SRI).
+  Todo lo demás es propio.
 - `noindex` + `robots.txt Disallow: /` — no debe aparecer en buscadores.
 - Las fotos originales viven en `IMAGES/` y NO se publican (`.gitignore`). El script
   `tools/optimizar-imagenes.js` las pasa a WebP en `fotos/galeria/`.
