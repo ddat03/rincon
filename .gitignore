@@ -4,3 +4,9 @@ IMAGES/
 .DS_Store
 Thumbs.db
 *.log
+
+# no publicar (contexto interno / revelan la sorpresa)
+regalo-web-novia-plan.md
+CLAUDE.md
+tools/geocache.json
+tools/run.log

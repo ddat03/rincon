@@ -1,130 +1,50 @@
 # Nuestra Historia
 
-Página web romántica de regalo — una sola experiencia con portada animada, carta en
-sobre, línea de tiempo, mapa de lugares y galería de fotos. HTML + CSS + JavaScript
-plano, sin backend. Todo el contenido personal vive en `data/*.json`.
+Página web personal de una sola experiencia: portada animada, una carta, una línea de
+tiempo, un mapa de lugares y una galería de fotos. HTML + CSS + JavaScript plano, sin
+backend. Todo el contenido vive en `data/*.json`.
 
-_Creado por Diego Aleman._
+## Previsualizar en local
 
----
+`fetch()` no funciona abriendo `index.html` con doble clic. Usá un servidor:
 
-## Cómo previsualizar en local
+- **VS Code + Live Server**, o
+- `python -m http.server 8080` → `http://localhost:8080`, o
+- `npx serve`
 
-`fetch()` no funciona abriendo el `index.html` con doble clic (`file://`). Necesitas un
-servidor local:
+## Editar el contenido
 
-- **VS Code + Live Server:** instala la extensión _Live Server_, clic derecho sobre
-  `index.html` → _Open with Live Server_.
-- **O con Python:** en la carpeta del proyecto, `python -m http.server 8080` y abre
-  `http://localhost:8080`.
-- **O con Node:** `npx serve` en la carpeta del proyecto.
-
----
-
-## Editar el contenido (sin tocar código)
-
-Todo está en la carpeta `data/`:
+Todo en `data/`:
 
 | Archivo | Qué controla |
 |---|---|
-| `data/config.json` | Nombre/apodo de ella, título del sitio, textos de portada y cierre, **fecha de inicio del contador** (`fechaInicio`), **clave de la bóveda** (`boveda.codigo`, por defecto `0708`) y su pista, y la ruta de la **música** (`musica.archivo`). |
-| `data/carta.json` | Encabezado, párrafos (uno por línea del arreglo) y firma de la carta. |
-| `data/momentos.json` | Línea de tiempo. Cada momento: `fecha`, `titulo`, `foto`, `nota` y `lugar` opcional (`{ nombre, lat, lng }`). Un momento con `lugar` también sale en el mapa (con su nota). |
-| `data/mapa.json` | Pines extra del mapa que **no** son hitos de la línea de tiempo. Cada uno: `fecha`, `foto`, `lugar { nombre, lat, lng }`. |
-| `data/galeria.json` | Lista de fotos/videos de la galería. `texto` opcional por foto. |
+| `config.json` | Nombre, título, textos de portada y cierre, fecha del contador, clave de entrada, ruta de la música, imagen de fondo. |
+| `carta.json` | Encabezado, párrafos y firma de la carta. |
+| `momentos.json` | Línea de tiempo (y pines del mapa cuando el momento tiene `lugar`). |
+| `mapa.json` | Pines extra del mapa. |
+| `galeria.json` | Fotos y videos de la galería. |
 
-Los tres últimos los **genera el script** a partir de las fotos (ver abajo). Después
-puedes editarlos a mano: cambiar un título, un texto, borrar un elemento, reordenar.
+## Fotos
 
----
-
-## Fotos — flujo automático
-
-Las fotos originales van en `IMAGES/`, repartidas en **3 subcarpetas** (esta carpeta
-no se publica, está en `.gitignore`):
-
-```
-IMAGES/
-  TIMELINE/   hitos de la línea de tiempo
-  MAPA/       fotos solo para el mapa
-  GALERIA/    todo el resto (y videos .mp4)
-```
-
-**Nombre de archivo:** si la foto salió del celular (`IMG_AAAAMMDD_HHMMSS...`), el
-script saca fecha y ubicación del EXIF solo. Si no tiene EXIF, ponle la fecha
-adelante: `2025-08-24 ...`. En `TIMELINE/` el texto después de la fecha/hora es el
-mensaje de ese hito, y `@ Lugar` al final fija el nombre del lugar.
-
-Luego:
+Los originales van en `IMAGES/{TIMELINE,MAPA,GALERIA}/` (carpeta no incluida en el repo).
+El script las procesa:
 
 ```bash
-cd tools
-npm install
-node procesar.js
+cd tools && npm install && node procesar.js
 ```
 
-El script:
-- optimiza todo a WebP (`fotos/timeline/`, `fotos/mapa/`, `fotos/galeria/` + `thumbs/`),
-- lee fecha y GPS del EXIF de cada foto,
-- reverse-geocodifica los puntos del mapa con **Nominatim** (cachea en `tools/geocache.json`),
-- reescribe `data/momentos.json`, `data/mapa.json` y `data/galeria.json`.
-
-Necesita un email de contacto para Nominatim: `NOMINATIM_CONTACT_EMAIL` (variable de
-entorno; si no está, usa uno por defecto). Nombres de lugares que queden feos se
-corrigen en la tabla `LUGARES` al principio de `tools/procesar.js` o a mano en el JSON.
-
-Si algún lugar del mapa no tiene EXIF con GPS, búscalo en
-<https://nominatim.openstreetmap.org/ui/search.html> y pega `lat`/`lng` en el JSON.
-
----
-
-## Bóveda de entrada y música
-
-Al abrir la página aparece una **caja fuerte**: hay que teclear la clave de 4
-dígitos (`boveda.codigo` en `config.json`, hoy `0708`). Con la clave correcta se
-abre, aparece la galaxia y arranca la música. La clave se recuerda en ese
-navegador para no repetir la bóveda al recargar (se borra limpiando datos del
-sitio, o cambiando la clave en el JSON).
-
-La **música** va en `musica/cancion.mp3` (o cambiá `musica.archivo`). Empieza sola
-porque el toque en el teclado de la bóveda cuenta como interacción y desbloquea el
-autoplay del navegador. Hay un botón abajo a la izquierda para silenciarla.
-
-Ahora suena **"Touching Story" de Kevin MacLeod** (incompetech.com), licencia
-**CC BY 4.0** — el crédito aparece chico en la pantalla de cierre
-(`config.json` → `musica.credito`). Si la cambiás, actualizá ese texto. Ver
-`musica/LEEME.txt`. Ojo con canciones con copyright: el repo es público.
+Optimiza a WebP, lee fecha/GPS del EXIF, reverse-geocodifica los puntos del mapa con
+Nominatim y regenera los JSON. Necesita la variable `NOMINATIM_CONTACT_EMAIL`.
 
 ## Publicar en GitHub Pages
 
-1. Crea un repo en la cuenta `ddat03` **con nombre neutro** (que no diga "regalo" ni el
-   nombre de ella), por ejemplo `notas-2025`.
-2. `git remote add origin https://github.com/ddat03/<nombre-repo>.git`
-3. `git add . && git commit -m "Sitio" && git push -u origin main`
-4. En GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch**,
-   rama `main`, carpeta `/ (root)`. Guarda.
-5. A los ~1-2 minutos el sitio queda en `https://ddat03.github.io/<nombre-repo>/`.
+El repo ya trae `.nojekyll`, `robots.txt` (Disallow) y `<meta name="robots" content="noindex">`.
+Todas las rutas son relativas, así que funciona desde `usuario.github.io/repo/`.
+En **Settings → Pages**: rama `main`, carpeta `/ (root)`.
 
-El repo debe ser **público** para GitHub Pages gratis. El archivo `.nojekyll` ya está
-incluido para que Pages sirva las carpetas tal cual. `robots.txt` y la meta
-`noindex` evitan que aparezca en buscadores.
+## Créditos
 
-Todas las rutas son relativas, así que funciona bien desde el subpath
-`usuario.github.io/repo/`.
+Música: *"Touching Story"* — Kevin MacLeod (incompetech.com), licencia CC BY 4.0.
+Mapa: Leaflet + OpenStreetMap. Corazón 3D: Three.js.
 
----
-
-## Estructura
-
-```
-index.html
-css/styles.css
-js/app.js
-data/            contenido personal (JSON)
-fotos/
-  timeline/      fotos de la línea de tiempo (WebP)
-  mapa/          fotos de los pines extra del mapa (WebP)
-  galeria/       fotos optimizadas + thumbs/
-tools/           procesar.js + optimizar-imagenes.js (no se publica)
-IMAGES/          originales (no se publica)
-```
+_Creado por Diego Aleman._
