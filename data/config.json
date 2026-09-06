@@ -18,6 +18,10 @@
     "titulo": "Touching Story",
     "credito": "Música: \"Touching Story\" — Kevin MacLeod (incompetech.com) · Licencia CC BY 4.0"
   },
+  "fondo": {
+    "imagen": "",
+    "opacidad": 0.5
+  },
   "cierre": {
     "titulo": "Y esto apenas empieza",
     "mensaje": "Gracias por cada día, por cada foto de estas y por las que faltan. Te amo."

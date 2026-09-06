@@ -286,6 +286,39 @@
   }
 
   /* =========================================================
+     FONDO AMBIENTAL — wash de color + pétalos (o una imagen)
+     ========================================================= */
+  function iniciarAmbiente(cfg) {
+    var amb = $('#ambiente');
+    if (!amb) return;
+    var conf = (cfg && cfg.fondo) || {};
+
+    if (conf.imagen) {
+      var im = document.createElement('div');
+      im.className = 'ambiente__img';
+      im.style.backgroundImage = 'url("' + String(conf.imagen).replace(/["\\]/g, '') + '")';
+      im.style.opacity = conf.opacidad != null ? conf.opacidad : 0.5;
+      amb.appendChild(im);
+    }
+
+    if (PREFIERE_MENOS_MOVIMIENTO) return;
+    var n = window.innerWidth < 640 ? 8 : 14;
+    for (var i = 0; i < n; i++) {
+      var p = document.createElement('span');
+      p.className = 'ambiente__petalo';
+      var s = 7 + Math.random() * 9;
+      p.style.left = (Math.random() * 100) + 'vw';
+      p.style.width = p.style.height = s.toFixed(1) + 'px';
+      p.style.animationDuration = (13 + Math.random() * 16).toFixed(1) + 's';
+      p.style.animationDelay = (-Math.random() * 22).toFixed(1) + 's';
+      p.style.opacity = (0.18 + Math.random() * 0.22).toFixed(2);
+      if (Math.random() < 0.4) p.style.background = 'rgba(212, 160, 86, 0.4)';
+      else if (Math.random() < 0.3) p.style.background = 'rgba(196, 168, 226, 0.4)';
+      amb.appendChild(p);
+    }
+  }
+
+  /* =========================================================
      BÓVEDA de entrada — teclado de 4 dígitos
      ========================================================= */
   function iniciarBoveda(cfg) {
@@ -889,11 +922,13 @@
 
     cargarJSON('data/config.json').then(function (cfg) {
       aplicarConfig(cfg);
+      iniciarAmbiente(cfg);
       iniciarMusica(cfg);
       iniciarBoveda(cfg);
     }).catch(function (e) {
       mostrarErrorGlobal(e);
       iniciarContador('2025-01-07');
+      iniciarAmbiente(null);
       iniciarBoveda(null);
     });
 

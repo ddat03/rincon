@@ -45,6 +45,71 @@ body {
   overflow-x: hidden;
 }
 
+/* ---------- Fondo ambiental ---------- */
+.ambiente {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: var(--crema);
+}
+.ambiente__wash {
+  position: absolute;
+  inset: -25%;
+  background:
+    radial-gradient(38% 38% at 18% 22%, rgba(232, 167, 179, 0.5), transparent 70%),
+    radial-gradient(42% 42% at 84% 18%, rgba(212, 160, 86, 0.32), transparent 70%),
+    radial-gradient(48% 48% at 72% 82%, rgba(181, 73, 91, 0.34), transparent 72%),
+    radial-gradient(44% 44% at 12% 84%, rgba(196, 168, 226, 0.34), transparent 72%);
+  filter: blur(34px);
+  animation: derivaWash 46s ease-in-out infinite alternate;
+}
+@keyframes derivaWash {
+  0%   { transform: translate3d(-3%, -2%, 0) scale(1.05) rotate(0deg); }
+  100% { transform: translate3d(4%, 3%, 0) scale(1.16) rotate(8deg); }
+}
+.ambiente__img {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.5;
+}
+.ambiente__petalo {
+  position: absolute;
+  top: -8vh;
+  width: 12px;
+  height: 12px;
+  background: rgba(181, 73, 91, 0.35);
+  border-radius: 150% 0 150% 0;
+  will-change: transform;
+  animation: caerPetalo linear infinite;
+}
+@keyframes caerPetalo {
+  0%   { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 0; }
+  12%  { opacity: 0.6; }
+  88%  { opacity: 0.45; }
+  100% { transform: translateY(112vh) translateX(48px) rotate(320deg); opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ambiente__wash { animation: none; }
+  .ambiente__petalo { display: none; }
+}
+
+/* las secciones van por encima del fondo */
+.seccion, .portada, .cierre { position: relative; z-index: 1; }
+
+/* transición suave entre las zonas oscuras y el fondo cálido */
+.portada {
+  -webkit-mask-image: linear-gradient(180deg, #000 90%, transparent);
+  mask-image: linear-gradient(180deg, #000 90%, transparent);
+}
+.cierre {
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 9%);
+  mask-image: linear-gradient(180deg, transparent, #000 9%);
+}
+
 img { max-width: 100%; display: block; }
 
 h1, h2, h3 { font-family: var(--fuente-titulo); font-weight: 600; line-height: 1.15; }
@@ -249,9 +314,9 @@ h1, h2, h3 { font-family: var(--fuente-titulo); font-weight: 600; line-height: 1
 }
 @keyframes flotar { 50% { transform: translate(-50%, 8px); } }
 
-/* Fondo de las secciones sobre crema, con contraste suave por franjas */
-.carta { background: var(--crema); }
-.historia { background: linear-gradient(180deg, var(--crema), var(--crema-2)); max-width: none; }
+/* Las secciones claras dejan ver el fondo ambiental */
+.carta { background: transparent; }
+.historia { background: transparent; max-width: none; }
 .historia .timeline { max-width: var(--ancho); margin-inline: auto; }
 .mapa { max-width: 900px; }
 .galeria { max-width: 1100px; }
