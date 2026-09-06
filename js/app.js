@@ -97,122 +97,177 @@
   }
 
   /* =========================================================
-     PORTADA — fondo animado (canvas): estrellas + corazones
+     PORTADA — galaxia con corazón (canvas)
+     Espiral de partículas girando + un corazón trazado con
+     estrellas más brillantes en el centro. Liviano en celular.
      ========================================================= */
   function iniciarFondoPortada() {
     var canvas = $('.portada__canvas');
     if (!canvas) return;
     var ctx = canvas.getContext('2d');
-    var ancho = 0, alto = 0, dpr = Math.min(window.devicePixelRatio || 1, 2);
-    var estrellas = [], corazones = [], animando = true, raf = null;
+    var ancho = 0, alto = 0, cx = 0, cy = 0;
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    var animando = true, raf = null, t = 0;
+    var estrellas = [], galaxia = [], corazon = [];
+    var mouseX = 0, mouseY = 0, offX = 0, offY = 0;
+
+    // paleta por radio normalizado (0 = núcleo, 1 = borde)
+    var PALETA = ['#fff4e6', '#ffe0b0', '#f4c07f', '#e88aa6', '#c774c0', '#8f74e8', '#6f8bec'];
+    function colorRadio(rn) {
+      return PALETA[Math.min(PALETA.length - 1, Math.floor(rn * PALETA.length))];
+    }
 
     function dimensionar() {
       ancho = canvas.clientWidth;
       alto = canvas.clientHeight;
-      canvas.width = ancho * dpr;
-      canvas.height = alto * dpr;
+      canvas.width = Math.round(ancho * dpr);
+      canvas.height = Math.round(alto * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cx = ancho / 2;
+      cy = alto * 0.42;
       sembrar();
+      if (PREFIERE_MENOS_MOVIMIENTO) { dibujar(); }
     }
 
     function sembrar() {
-      var densidad = Math.round((ancho * alto) / 9000);
-      densidad = Math.max(40, Math.min(densidad, 160));
+      var area = ancho * alto;
+      var nEst = Math.max(50, Math.min(Math.round(area / 7000), 220));
       estrellas = [];
-      for (var i = 0; i < densidad; i++) {
+      for (var i = 0; i < nEst; i++) {
         estrellas.push({
-          x: Math.random() * ancho,
-          y: Math.random() * alto,
-          r: Math.random() * 1.6 + 0.3,
-          brillo: Math.random(),
-          vel: Math.random() * 0.0015 + 0.0004
+          x: Math.random() * ancho, y: Math.random() * alto,
+          r: Math.random() * 1.4 + 0.25,
+          f: Math.random() * Math.PI * 2, v: Math.random() * 0.03 + 0.008
         });
       }
-      var nCor = PREFIERE_MENOS_MOVIMIENTO ? 0 : Math.max(6, Math.round(ancho / 90));
-      corazones = [];
-      for (var j = 0; j < nCor; j++) corazones.push(nuevoCorazon(true));
+
+      var radio = Math.min(ancho, alto) * (ancho < 560 ? 0.66 : 0.52);
+      var nGal = Math.max(420, Math.min(Math.round(area / 950), 1700));
+      if (PREFIERE_MENOS_MOVIMIENTO) nGal = Math.min(nGal, 700);
+      var brazos = 2, giroEspiral = 2.7;
+      galaxia = [];
+      for (var g = 0; g < nGal; g++) {
+        var enBulbo = g < nGal * 0.22;                   // núcleo denso
+        var rn = enBulbo ? Math.pow(Math.random(), 1.7) * 0.28 : Math.pow(Math.random(), 0.55);
+        var r = rn * radio;
+        var brazo = g % brazos;
+        var base = brazo * (Math.PI * 2 / brazos) + rn * giroEspiral;
+        var disp = (Math.random() - 0.5) * (enBulbo ? 6.3 : (0.52 - rn * 0.32));
+        galaxia.push({
+          r: r, a: base + disp,
+          w: (0.10 + (1 - rn) * 0.4) * 0.0016,           // rotación diferencial
+          rn: rn,
+          size: Math.random() < 0.10 ? (Math.random() * 1.1 + 1.6) : (Math.random() * 1 + 0.55),
+          col: colorRadio(Math.min(1, rn + (Math.random() - 0.5) * 0.14)),
+          tw: Math.random() * Math.PI * 2, tv: Math.random() * 0.05 + 0.02
+        });
+      }
+
+      // corazón: curva paramétrica clásica
+      var escala = radio * 0.043;
+      corazon = [];
+      var nCor = ancho < 560 ? 110 : 168;
+      for (var h = 0; h < nCor; h++) {
+        var th = (h / nCor) * Math.PI * 2;
+        var hx = 16 * Math.pow(Math.sin(th), 3);
+        var hy = 13 * Math.cos(th) - 5 * Math.cos(2 * th) - 2 * Math.cos(3 * th) - Math.cos(4 * th);
+        corazon.push({
+          x: hx * escala + (Math.random() - 0.5) * 3,
+          y: -hy * escala + (Math.random() - 0.5) * 3,
+          tw: Math.random() * Math.PI * 2, tv: Math.random() * 0.06 + 0.03,
+          size: Math.random() * 1.1 + 0.9
+        });
+      }
     }
 
-    function nuevoCorazon(inicial) {
-      return {
-        x: Math.random() * ancho,
-        y: inicial ? Math.random() * alto : alto + 20,
-        tam: Math.random() * 10 + 6,
-        vy: Math.random() * 0.35 + 0.15,
-        deriva: (Math.random() - 0.5) * 0.4,
-        alfa: Math.random() * 0.4 + 0.15,
-        giro: Math.random() * Math.PI
-      };
+    function dibujar() {
+      ctx.clearRect(0, 0, ancho, alto);
+
+      // brillo del núcleo
+      var glow = ctx.createRadialGradient(cx + offX, cy + offY, 0, cx + offX, cy + offY, Math.min(ancho, alto) * 0.6);
+      glow.addColorStop(0, 'rgba(255, 224, 196, 0.26)');
+      glow.addColorStop(0.22, 'rgba(226, 138, 166, 0.15)');
+      glow.addColorStop(0.5, 'rgba(143, 116, 232, 0.08)');
+      glow.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = glow;
+      ctx.fillRect(0, 0, ancho, alto);
+
+      // estrellas de fondo
+      for (var i = 0; i < estrellas.length; i++) {
+        var s = estrellas[i];
+        var b = 0.35 + Math.sin(s.f + t * s.v) * 0.35 + 0.3;
+        ctx.globalAlpha = Math.max(0, Math.min(1, b)) * 0.8;
+        ctx.fillStyle = '#ffe9d6';
+        ctx.fillRect(s.x, s.y, s.r, s.r);
+      }
+
+      // galaxia
+      var flatten = 0.58, tilt = -0.34;
+      var cosT = Math.cos(tilt), sinT = Math.sin(tilt);
+      ctx.globalCompositeOperation = 'lighter';
+      for (var g = 0; g < galaxia.length; g++) {
+        var p = galaxia[g];
+        if (!PREFIERE_MENOS_MOVIMIENTO) p.a += p.w * 16;
+        var px = Math.cos(p.a) * p.r;
+        var py = Math.sin(p.a) * p.r * flatten;
+        var rx = px * cosT - py * sinT;
+        var ry = px * sinT + py * cosT;
+        var tw = 0.6 + Math.sin(p.tw + t * p.tv) * 0.4;
+        ctx.globalAlpha = Math.min(1, (0.5 + (1 - p.rn) * 0.5) * tw);
+        ctx.fillStyle = p.col;
+        ctx.fillRect(cx + offX + rx, cy + offY + ry, p.size, p.size);
+      }
+      ctx.globalCompositeOperation = 'source-over';
+
+      // corazón
+      ctx.globalCompositeOperation = 'lighter';
+      var lat = PREFIERE_MENOS_MOVIMIENTO ? 1 : 1 + Math.sin(t * 0.03) * 0.03;
+      for (var h = 0; h < corazon.length; h++) {
+        var c = corazon[h];
+        var br = 0.5 + Math.sin(c.tw + t * c.tv) * 0.5;
+        ctx.globalAlpha = 0.35 + br * 0.6;
+        ctx.fillStyle = br > 0.6 ? '#ffd9a8' : '#ff6f9d';
+        var s2 = c.size * (br > 0.7 ? 1.6 : 1);
+        ctx.fillRect(cx + offX + c.x * lat, cy + offY + c.y * lat - alto * 0.02, s2, s2);
+      }
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.globalAlpha = 1;
     }
 
-    function dibujarCorazon(x, y, tam, alfa, giro) {
-      ctx.save();
-      ctx.translate(x, y);
-      ctx.rotate(giro);
-      ctx.scale(tam / 16, tam / 16);
-      ctx.globalAlpha = alfa;
-      ctx.fillStyle = Math.random() < 0.5 ? '#b5495b' : '#d4a056';
-      ctx.beginPath();
-      ctx.moveTo(0, 4);
-      ctx.bezierCurveTo(0, 1, -3, -3, -8, -3);
-      ctx.bezierCurveTo(-15, -3, -15, 6, -15, 6);
-      ctx.bezierCurveTo(-15, 11, -9, 17, 0, 22);
-      ctx.bezierCurveTo(9, 17, 15, 11, 15, 6);
-      ctx.bezierCurveTo(15, 6, 15, -3, 8, -3);
-      ctx.bezierCurveTo(3, -3, 0, 1, 0, 4);
-      ctx.fill();
-      ctx.restore();
-    }
-
-    var t = 0;
     function frame() {
       if (!animando) return;
       t += 1;
-      ctx.clearRect(0, 0, ancho, alto);
-
-      for (var i = 0; i < estrellas.length; i++) {
-        var s = estrellas[i];
-        s.brillo += s.vel * (Math.sin(t * 0.02 + i) > 0 ? 1 : -1);
-        if (s.brillo < 0) s.brillo = 0; else if (s.brillo > 1) s.brillo = 1;
-        ctx.globalAlpha = 0.25 + s.brillo * 0.65;
-        ctx.fillStyle = '#ffe9d6';
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      for (var k = 0; k < corazones.length; k++) {
-        var c = corazones[k];
-        c.y -= c.vy;
-        c.x += c.deriva + Math.sin((c.y + t) * 0.02) * 0.3;
-        c.giro += 0.005;
-        dibujarCorazon(c.x, c.y, c.tam, c.alfa, c.giro);
-        if (c.y < -30) corazones[k] = nuevoCorazon(false);
-      }
-      ctx.globalAlpha = 1;
+      offX += ((mouseX - cx) * 0.02 - offX) * 0.04;
+      offY += ((mouseY - cy) * 0.02 - offY) * 0.04;
+      dibujar();
       raf = requestAnimationFrame(frame);
     }
 
-    function arrancar() { if (!animando) { animando = true; frame(); } }
+    function arrancar() {
+      if (PREFIERE_MENOS_MOVIMIENTO) { dibujar(); return; }
+      if (!animando) { animando = true; frame(); }
+    }
     function parar() { animando = false; if (raf) cancelAnimationFrame(raf); }
 
     dimensionar();
-    frame();
+    if (PREFIERE_MENOS_MOVIMIENTO) dibujar(); else frame();
 
     var reajuste;
     window.addEventListener('resize', function () {
       clearTimeout(reajuste);
       reajuste = setTimeout(dimensionar, 200);
     });
+    window.addEventListener('pointermove', function (e) {
+      mouseX = e.clientX; mouseY = e.clientY;
+    }, { passive: true });
 
     document.addEventListener('visibilitychange', function () {
       if (document.hidden) parar(); else arrancar();
     });
-
     if ('IntersectionObserver' in window) {
       new IntersectionObserver(function (ents) {
         ents.forEach(function (e) { if (e.isIntersecting) arrancar(); else parar(); });
-      }, { threshold: 0.05 }).observe($('#portada'));
+      }, { threshold: 0.02 }).observe($('#portada'));
     }
   }
 

@@ -164,7 +164,8 @@ h1, h2, h3 { font-family: var(--fuente-titulo); font-weight: 600; line-height: 1
   text-align: center;
   padding: 2rem 1.25rem;
   color: #fff;
-  background: radial-gradient(ellipse at 50% 20%, var(--oscuro-2), var(--oscuro) 60%, #1a0710);
+  background:
+    radial-gradient(ellipse at 50% 42%, #3a1330 0%, #1c0a1c 45%, #0c0510 100%);
   overflow: hidden;
 }
 .portada__canvas {
@@ -191,7 +192,7 @@ h1, h2, h3 { font-family: var(--fuente-titulo); font-weight: 600; line-height: 1
   font-size: clamp(3.2rem, 16vw, 6rem);
   margin: 0.1em 0 0.2em;
   color: #fff;
-  text-shadow: 0 4px 30px rgba(181, 73, 91, 0.55);
+  text-shadow: 0 2px 14px rgba(12, 5, 16, 0.55), 0 4px 34px rgba(181, 73, 91, 0.5);
 }
 .portada__sub {
   font-size: 1.1rem;
