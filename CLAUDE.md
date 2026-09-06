@@ -41,8 +41,21 @@ Mobile-first (se abre primero desde el celular). Respeta `prefers-reduced-motion
   `tools/optimizar-imagenes.js` las pasa a WebP en `fotos/galeria/`.
 - Firma discreta "Creado por Diego Aleman" en el cierre (campo `firmaAutor`).
 
-## Estado
+## Datos y fotos
 
-Scaffold completo y funcional con contenido de relleno. Pendiente de Diego: nombre/apodo
-real en config.json, texto de la carta, notas de cada momento, coordenadas de lugares,
-y podar la galería (75 fotos cargadas de relleno).
+- `IMAGES/{TIMELINE,MAPA,GALERIA}/` — originales de Diego (gitignored). Casi todas son
+  originales del celular con EXIF (fecha + GPS).
+- `tools/procesar.js` procesa las 3 carpetas: optimiza a WebP, lee EXIF, reverse-geocodifica
+  el mapa con Nominatim (cache en `tools/geocache.json`), y genera `data/momentos.json`,
+  `data/mapa.json`, `data/galeria.json`. Tabla `LUGARES` al inicio para nombres bonitos.
+- Mapa = momentos con `lugar` + entradas de `mapa.json`. Puntos de `mapa.json` a <1.5 km
+  de un hito se descartan (ya cubiertos).
+- Nombre de ella: **Alison Adriana**, apodo "Mi Púa".
+
+## Estado (2026-09-05)
+
+Sitio funcional. Timeline con 13 hitos reales (mensajes de Diego, typos corregidos
+levemente), 3 pines extra de mapa, 33 fotos/videos en galería. Pendiente de Diego:
+texto de la carta (`carta.json`), revisar los mensajes de la timeline, decidir si suma
+hitos "9 nov 2024 / 10 dic 2024" sin foto, y la galaxia elaborada de la portada (pasada
+de pulido final).

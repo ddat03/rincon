@@ -1,0 +1,35 @@
+[
+  {
+    "id": "m01",
+    "fecha": "2025-08-24",
+    "foto": "fotos/mapa/m01.webp",
+    "lugar": {
+      "nombre": "Once de Noviembre, Latacunga",
+      "ciudad": "Once de Noviembre",
+      "lat": -0.9168,
+      "lng": -78.6576
+    }
+  },
+  {
+    "id": "m02",
+    "fecha": "2026-02-08",
+    "foto": "fotos/mapa/m02.webp",
+    "lugar": {
+      "nombre": "Reserva Llanganates",
+      "ciudad": "Salcedo",
+      "lat": -0.9909,
+      "lng": -78.4292
+    }
+  },
+  {
+    "id": "m03",
+    "fecha": "2026-04-01",
+    "foto": "fotos/mapa/m03.webp",
+    "lugar": {
+      "nombre": "Cotundo, Napo",
+      "ciudad": "Cotundo",
+      "lat": -0.54,
+      "lng": -78.2246
+    }
+  }
+]

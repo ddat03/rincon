@@ -1,29 +1,119 @@
 [
   {
-    "id": "conocerse",
-    "fecha": "2024-11-09",
-    "titulo": "Nos conocimos",
-    "descripcion": "El día en que todo esto empezó. Reemplaza este texto por cómo lo recuerdas tú.",
-    "foto": "fotos/momentos/conocerse.webp",
-    "nota": "Un recuerdo personal de ese día: qué llevabas puesto, de qué hablaron, qué pensaste.",
-    "lugar": null
+    "id": "t01",
+    "fecha": "2024-12-15",
+    "titulo": "Salcedo",
+    "descripcion": "",
+    "foto": "fotos/timeline/t01.webp",
+    "nota": "Desde que te vi en aquella Mama Negra sabía que ibas a ser la mujer que más iba a amar.",
+    "lugar": { "nombre": "Salcedo", "lat": -1.0985, "lng": -78.5929 }
   },
   {
-    "id": "primer-beso",
-    "fecha": "2024-12-10",
-    "titulo": "Fiestas de Quito — primer beso",
-    "descripcion": "En medio de la fiesta de la ciudad. Cámbialo por el detalle que quieras contar.",
-    "foto": "fotos/momentos/primer-beso.webp",
-    "nota": "Tu recuerdo de ese momento.",
-    "lugar": { "nombre": "Quito, Ecuador", "lat": -0.1806532, "lng": -78.4678382 }
-  },
-  {
-    "id": "empezamos",
+    "id": "t02",
     "fecha": "2025-01-07",
-    "titulo": "Empezamos en serio",
-    "descripcion": "El día que decidieron que esto iba de verdad.",
-    "foto": "fotos/momentos/empezamos.webp",
-    "nota": "Por qué esa fecha, quién lo dijo primero, cómo se sintió.",
+    "titulo": "Quito",
+    "descripcion": "",
+    "foto": "fotos/timeline/t02.webp",
+    "nota": "Fue un enero 7 en el cual sé que no fue de forma formal, pero quería que estés en mi vida.",
+    "lugar": { "nombre": "Quito", "lat": -0.1816, "lng": -78.495 }
+  },
+  {
+    "id": "t03",
+    "fecha": "2025-07-25",
+    "titulo": "Centro Histórico de Quito",
+    "descripcion": "",
+    "foto": "fotos/timeline/t03.webp",
+    "nota": "Siempre será mi lugar favorito. Andar de tu mano es lo más bonito, caminemos lo que caminemos.",
+    "lugar": { "nombre": "Centro Histórico de Quito", "lat": -0.2243, "lng": -78.514 }
+  },
+  {
+    "id": "t04",
+    "fecha": "2025-08-24",
+    "titulo": "Hacienda cerca de Latacunga",
+    "descripcion": "",
+    "foto": "fotos/timeline/t04.webp",
+    "nota": "Conocer lugares bonitos gracias a tu forma e incentivo de ser. Perdóname por no ser lo que a veces necesitas, pero trato de ser mejor persona.",
+    "lugar": { "nombre": "Cerca de Latacunga", "lat": -1.0445, "lng": -78.5924 }
+  },
+  {
+    "id": "t05",
+    "fecha": "2025-09-27",
+    "titulo": "Latacunga",
+    "descripcion": "",
+    "foto": "fotos/timeline/t05.webp",
+    "nota": "Sé que vamos a tener más desfiles, solo es cuestión de paciencia. En esa foto, un año de haberte conocido.",
+    "lugar": { "nombre": "Latacunga", "lat": -0.9298, "lng": -78.6172 }
+  },
+  {
+    "id": "t06",
+    "fecha": "2025-09-28",
+    "titulo": "Laguna de Yambo",
+    "descripcion": "",
+    "foto": "fotos/timeline/t06.webp",
+    "nota": "Solo ver tu sonrisa y sé que ando bien loco por ti, y que cada vez que me dices si estás guapa, yo digo: obvio.",
+    "lugar": { "nombre": "Laguna de Yambo", "lat": -1.0991, "lng": -78.5926 }
+  },
+  {
+    "id": "t07",
+    "fecha": "2025-10-26",
+    "titulo": "El Quinche",
+    "descripcion": "",
+    "foto": "fotos/timeline/t07.webp",
+    "nota": "Gracias por preocuparte por mí y ser la persona que tiene más fe en mí. Tu velita, jeje.",
+    "lugar": { "nombre": "El Quinche", "lat": -0.1108, "lng": -78.297 }
+  },
+  {
+    "id": "t08",
+    "fecha": "2025-12-06",
+    "titulo": "Ambato",
+    "descripcion": "",
+    "foto": "fotos/timeline/t08.webp",
+    "nota": "Quiero que sigas siendo la mujer que eres: la que sabe hacer planes, la que ama mucho. Y que me perdones por todo lo que he hecho mal.",
+    "lugar": { "nombre": "Ambato", "lat": -1.2349, "lng": -78.6264 }
+  },
+  {
+    "id": "t09",
+    "fecha": "2026-02-08",
+    "titulo": "Reserva Llanganates",
+    "descripcion": "",
+    "foto": "fotos/timeline/t09.webp",
+    "nota": "Aunque no quiera tomarme fotos porque tú eres muy hermosa y yo tengo salud, gracias por comprenderme.",
+    "lugar": { "nombre": "Reserva Llanganates", "lat": -0.9656, "lng": -78.4054 }
+  },
+  {
+    "id": "t10",
+    "fecha": "2026-03-15",
+    "titulo": "Cumbijín",
+    "descripcion": "",
+    "foto": "fotos/timeline/t10.webp",
+    "nota": "Saber que también estás en los planes con mis amigos y no te emputas mucho, jeje. Te amo.",
+    "lugar": { "nombre": "Cumbijín", "lat": -1.0324, "lng": -78.5008 }
+  },
+  {
+    "id": "t11",
+    "fecha": "2026-07-29",
+    "titulo": "Centro Histórico de Quito",
+    "descripcion": "",
+    "foto": "fotos/timeline/t11.webp",
+    "nota": "Aunque no avancé a tomarte tus fotos aztecas, intentaré ser mejor.",
+    "lugar": { "nombre": "Centro Histórico de Quito", "lat": -0.2188, "lng": -78.5116 }
+  },
+  {
+    "id": "t12",
+    "fecha": "2026-08-02",
+    "titulo": "Mitad del Mundo",
+    "descripcion": "",
+    "foto": "fotos/timeline/t12.webp",
+    "nota": "Eres lo mejor que me ha pasado en la vida, y te adoro más porque eres mi 4x4.",
+    "lugar": { "nombre": "Mitad del Mundo", "lat": -0.002, "lng": -78.4558 }
+  },
+  {
+    "id": "t13",
+    "fecha": null,
+    "titulo": "Hoy",
+    "descripcion": "",
+    "foto": "fotos/timeline/t13.webp",
+    "nota": "Vamos a tener muchos más viajes, sé que tenemos un futuro muy largo. Cuando peleemos, hablemos y seamos mejor pareja. Te amo mucho, en serio. Alison Adriana, eres mi vida.",
     "lugar": null
   }
 ]

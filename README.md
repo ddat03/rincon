@@ -29,35 +29,52 @@ Todo está en la carpeta `data/`:
 |---|---|
 | `data/config.json` | Nombre/apodo de ella, título del sitio, textos de portada y cierre, **fecha de inicio del contador** (`fechaInicio`). |
 | `data/carta.json` | Encabezado, párrafos (uno por línea del arreglo) y firma de la carta. |
-| `data/momentos.json` | Línea de tiempo **y** mapa. Cada momento: `fecha`, `titulo`, `descripcion`, `foto`, `nota` y `lugar` opcional (`{ nombre, lat, lng }`). Sin `lugar` → solo aparece en la línea de tiempo. |
-| `data/galeria.json` | Lista de fotos/videos de la galería. Generado por el script de imágenes (ver abajo); puedes reordenar y agregar `texto` a cada uno. |
+| `data/momentos.json` | Línea de tiempo. Cada momento: `fecha`, `titulo`, `foto`, `nota` y `lugar` opcional (`{ nombre, lat, lng }`). Un momento con `lugar` también sale en el mapa (con su nota). |
+| `data/mapa.json` | Pines extra del mapa que **no** son hitos de la línea de tiempo. Cada uno: `fecha`, `foto`, `lugar { nombre, lat, lng }`. |
+| `data/galeria.json` | Lista de fotos/videos de la galería. `texto` opcional por foto. |
 
-### Coordenadas para el mapa
-
-Busca el lugar en <https://nominatim.openstreetmap.org/ui/search.html>, copia la
-latitud y longitud, y pégalas en el campo `lugar` de ese momento en `momentos.json`.
-Respeta el límite de 1 búsqueda por segundo del servicio.
+Los tres últimos los **genera el script** a partir de las fotos (ver abajo). Después
+puedes editarlos a mano: cambiar un título, un texto, borrar un elemento, reordenar.
 
 ---
 
-## Fotos
+## Fotos — flujo automático
 
-Las fotos originales van en la carpeta `IMAGES/` (no se publica — está en `.gitignore`).
-El script las optimiza a WebP y genera miniaturas:
+Las fotos originales van en `IMAGES/`, repartidas en **3 subcarpetas** (esta carpeta
+no se publica, está en `.gitignore`):
+
+```
+IMAGES/
+  TIMELINE/   hitos de la línea de tiempo
+  MAPA/       fotos solo para el mapa
+  GALERIA/    todo el resto (y videos .mp4)
+```
+
+**Nombre de archivo:** si la foto salió del celular (`IMG_AAAAMMDD_HHMMSS...`), el
+script saca fecha y ubicación del EXIF solo. Si no tiene EXIF, ponle la fecha
+adelante: `2025-08-24 ...`. En `TIMELINE/` el texto después de la fecha/hora es el
+mensaje de ese hito, y `@ Lugar` al final fija el nombre del lugar.
+
+Luego:
 
 ```bash
 cd tools
 npm install
-npm run optimize
+node procesar.js
 ```
 
-Esto crea `fotos/galeria/gNN.webp` (grande) + `fotos/galeria/thumbs/gNN.webp` (miniatura)
-y reescribe `data/galeria.json` con la lista completa. Después edita ese JSON para
-descartar las fotos que no quieras y ponerles un texto.
+El script:
+- optimiza todo a WebP (`fotos/timeline/`, `fotos/mapa/`, `fotos/galeria/` + `thumbs/`),
+- lee fecha y GPS del EXIF de cada foto,
+- reverse-geocodifica los puntos del mapa con **Nominatim** (cachea en `tools/geocache.json`),
+- reescribe `data/momentos.json`, `data/mapa.json` y `data/galeria.json`.
 
-Para las fotos de la línea de tiempo, reemplaza los archivos de `fotos/momentos/`
-(`conocerse.webp`, `primer-beso.webp`, `empezamos.webp`) por las tuyas, o cambia la
-ruta `foto` en `momentos.json`.
+Necesita un email de contacto para Nominatim: `NOMINATIM_CONTACT_EMAIL` (variable de
+entorno; si no está, usa uno por defecto). Nombres de lugares que queden feos se
+corrigen en la tabla `LUGARES` al principio de `tools/procesar.js` o a mano en el JSON.
+
+Si algún lugar del mapa no tiene EXIF con GPS, búscalo en
+<https://nominatim.openstreetmap.org/ui/search.html> y pega `lat`/`lng` en el JSON.
 
 ---
 
@@ -88,7 +105,9 @@ css/styles.css
 js/app.js
 data/            contenido personal (JSON)
 fotos/
-  momentos/      fotos de la línea de tiempo
+  timeline/      fotos de la línea de tiempo (WebP)
+  mapa/          fotos de los pines extra del mapa (WebP)
   galeria/       fotos optimizadas + thumbs/
-tools/           script de optimización de imágenes (no se publica)
+tools/           procesar.js + optimizar-imagenes.js (no se publica)
+IMAGES/          originales (no se publica)
 ```

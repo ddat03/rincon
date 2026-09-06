@@ -315,11 +315,12 @@
   /* =========================================================
      NUESTRO MAPA — Leaflet
      ========================================================= */
-  function iniciarMapa(momentos) {
+  function iniciarMapa(momentos, extra) {
     var cont = $('#map');
     if (!cont) return;
 
-    var conLugar = (momentos || []).filter(function (m) {
+    var todos = (momentos || []).concat(extra || []);
+    var conLugar = todos.filter(function (m) {
       return m.lugar && typeof m.lugar.lat === 'number' && typeof m.lugar.lng === 'number' &&
         !(m.lugar.lat === 0 && m.lugar.lng === 0);
     });
@@ -560,9 +561,12 @@
 
     cargarJSON('data/carta.json').then(iniciarCarta).catch(mostrarErrorGlobal);
 
-    cargarJSON('data/momentos.json').then(function (m) {
-      iniciarHistoria(m);
-      iniciarMapa(m);
+    Promise.all([
+      cargarJSON('data/momentos.json'),
+      cargarJSON('data/mapa.json').catch(function () { return []; })
+    ]).then(function (res) {
+      iniciarHistoria(res[0]);
+      iniciarMapa(res[0], res[1]);
     }).catch(function (e) {
       mostrarErrorGlobal(e);
       var tl = $('#timeline');
