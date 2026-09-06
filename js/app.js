@@ -419,10 +419,11 @@
 
     var reloj = 0, visible = true, raf;
     function frame() {
+      if (PREFIERE_MENOS_MOVIMIENTO) { camara.lookAt(0, 3.7, 0); renderer.render(scene, camara); return; }
       raf = requestAnimationFrame(frame);
       if (!visible) return;
       reloj += 0.016;
-      if (!PREFIERE_MENOS_MOVIMIENTO) {
+      if (true) {
         grupo.rotation.y = Math.sin(reloj * 0.16) * 0.55;
         corazon.material.size = 0.1 + Math.sin(reloj * 1.5) * 0.014;
         podio.material.opacity = 0.72 + Math.sin(reloj * 1.5) * 0.16;
