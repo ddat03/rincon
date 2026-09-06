@@ -27,7 +27,7 @@ Todo está en la carpeta `data/`:
 
 | Archivo | Qué controla |
 |---|---|
-| `data/config.json` | Nombre/apodo de ella, título del sitio, textos de portada y cierre, **fecha de inicio del contador** (`fechaInicio`). |
+| `data/config.json` | Nombre/apodo de ella, título del sitio, textos de portada y cierre, **fecha de inicio del contador** (`fechaInicio`), **clave de la bóveda** (`boveda.codigo`, por defecto `0708`) y su pista, y la ruta de la **música** (`musica.archivo`). |
 | `data/carta.json` | Encabezado, párrafos (uno por línea del arreglo) y firma de la carta. |
 | `data/momentos.json` | Línea de tiempo. Cada momento: `fecha`, `titulo`, `foto`, `nota` y `lugar` opcional (`{ nombre, lat, lng }`). Un momento con `lugar` también sale en el mapa (con su nota). |
 | `data/mapa.json` | Pines extra del mapa que **no** son hitos de la línea de tiempo. Cada uno: `fecha`, `foto`, `lugar { nombre, lat, lng }`. |
@@ -77,6 +77,19 @@ Si algún lugar del mapa no tiene EXIF con GPS, búscalo en
 <https://nominatim.openstreetmap.org/ui/search.html> y pega `lat`/`lng` en el JSON.
 
 ---
+
+## Bóveda de entrada y música
+
+Al abrir la página aparece una **caja fuerte**: hay que teclear la clave de 4
+dígitos (`boveda.codigo` en `config.json`, hoy `0708`). Con la clave correcta se
+abre, aparece la galaxia y arranca la música. La clave se recuerda en ese
+navegador para no repetir la bóveda al recargar (se borra limpiando datos del
+sitio, o cambiando la clave en el JSON).
+
+La **música** va en `musica/cancion.mp3` (o cambiá `musica.archivo`). Empieza sola
+porque el toque en el teclado de la bóveda cuenta como interacción y desbloquea el
+autoplay del navegador. Hay un botón abajo a la izquierda para silenciarla. Ver
+`musica/LEEME.txt` (ojo con canciones con copyright en un repo público).
 
 ## Publicar en GitHub Pages
 

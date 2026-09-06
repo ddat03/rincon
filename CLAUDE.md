@@ -7,9 +7,13 @@ contenido personal vive en archivos JSON dentro de `/data`, no hardcodeado.
 
 ## Secciones (scroll único con nav flotante)
 
-1. **Portada** — fondo canvas animado (estrellas + corazones, hecho a mano, sin CDN),
-   nombre de ella, contador en vivo de "tiempo juntos" desde el 7 de enero de 2025,
-   botón "Toca para entrar".
+0. **Bóveda** — overlay inicial tipo caja fuerte, teclado 4 dígitos (`boveda.codigo`,
+   default 0708). Al acertar: `dispararEntrada()` → arranca galaxia + música. Se
+   recuerda en localStorage (`nh_entrada`). La galaxia y el `<audio>` quedan
+   pausados con `alEntrar(cb)` hasta ese momento (el tap desbloquea el autoplay).
+1. **Portada** — galaxia en canvas (espiral con rotación diferencial + corazón de
+   estrellas, hecho a mano), nombre de ella, contador en vivo desde el 7-ene-2025.
+   Música de fondo opcional (`musica/cancion.mp3`, botón silenciar abajo-izq).
 2. **La carta** — sobre CSS/SVG que se abre con tap y revela el texto de `data/carta.json`.
 3. **Nuestra historia** — línea de tiempo vertical desde `data/momentos.json`, con
    reveal por IntersectionObserver; alterna lados en escritorio.
