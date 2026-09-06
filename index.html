@@ -130,7 +130,15 @@
   <!-- 5. GALERÍA -->
   <section id="galeria" class="seccion galeria">
     <h2 class="titulo-seccion">Galería</h2>
-    <div class="galeria__grid" id="galeriaGrid"></div>
+    <div class="carrusel3d carrusel3d--y" data-eje="y">
+      <div class="carrusel3d__giro"><div class="carrusel3d__anillo"></div></div>
+    </div>
+    <div class="carrusel3d carrusel3d--x" data-eje="x">
+      <div class="carrusel3d__giro"><div class="carrusel3d__anillo"></div></div>
+    </div>
+    <p class="carrusel3d__pista">Arrástralas para girar · toca una foto para verla</p>
+    <button class="btn btn--ghost" id="verTodas" type="button" hidden>Ver todas las fotos</button>
+    <div class="galeria__grid" id="galeriaGrid" hidden></div>
   </section>
 
   <!-- 6. CIERRE -->
