@@ -510,6 +510,189 @@ h1, h2, h3 { font-family: var(--fuente-titulo); font-weight: 600; line-height: 1
 }
 
 /* =========================================================
+   BÓVEDA de entrada
+   ========================================================= */
+.boveda {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: grid;
+  place-items: center;
+  padding: 1.2rem;
+  background:
+    radial-gradient(ellipse at 50% 35%, #341126 0%, #1a0a18 55%, #0a0510 100%);
+  animation: aparecer 0.4s ease;
+}
+.boveda[hidden] { display: none; }
+.boveda.abriendo { animation: bovedaSale 1s ease forwards; }
+@keyframes bovedaSale {
+  to { opacity: 0; transform: scale(1.15); visibility: hidden; }
+}
+
+.boveda__puerta {
+  position: relative;
+  width: min(90vw, 86vh, 430px);
+  height: min(90vw, 86vh, 430px);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 36% 30%, #6b5566 0%, #4a3a48 32%, #2e2430 64%, #201823 100%);
+  box-shadow:
+    inset 0 0 0 8px rgba(255, 255, 255, 0.04),
+    inset 0 0 44px rgba(0, 0, 0, 0.6),
+    inset 0 10px 22px rgba(255, 255, 255, 0.07),
+    0 30px 80px rgba(0, 0, 0, 0.55);
+}
+.boveda__anillo {
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  border: 2px dashed rgba(212, 160, 86, 0.4);
+  box-shadow: inset 0 0 0 10px rgba(0, 0, 0, 0.22);
+  pointer-events: none;
+}
+/* volante lateral de la caja fuerte */
+.boveda__manija {
+  position: absolute;
+  right: -9%;
+  top: 50%;
+  width: 20%;
+  height: 20%;
+  margin-top: -10%;
+  border-radius: 50%;
+  pointer-events: none;
+  background: radial-gradient(circle at 40% 35%, #7a6472, #3a2e3a 70%);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.5), inset 0 2px 4px rgba(255, 255, 255, 0.2);
+  transition: transform 1s cubic-bezier(0.5, 0, 0.2, 1);
+}
+.boveda__manija::before,
+.boveda__manija::after {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background:
+    linear-gradient(0deg, transparent 44%, rgba(230, 214, 196, 0.55) 44% 56%, transparent 56%),
+    linear-gradient(60deg, transparent 45%, rgba(230, 214, 196, 0.45) 45% 55%, transparent 55%),
+    linear-gradient(-60deg, transparent 45%, rgba(230, 214, 196, 0.45) 45% 55%, transparent 55%);
+}
+.boveda__manija::after {
+  inset: 33%;
+  background: radial-gradient(circle, #d4a056, #8a6a38);
+}
+.boveda.abriendo .boveda__manija { transform: rotate(220deg); }
+
+.boveda__panel {
+  position: relative;
+  z-index: 3;
+  width: 72%;
+  text-align: center;
+  color: #fff;
+}
+.boveda__titulo {
+  font-size: clamp(1.5rem, 5.5vw, 2rem);
+  margin: 0;
+  color: var(--dorado);
+}
+.boveda__instruccion {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0.2rem 0 0.7rem;
+}
+.boveda__display {
+  display: flex;
+  justify-content: center;
+  gap: 0.7rem;
+  margin-bottom: 0.3rem;
+}
+.boveda__display span {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 255, 255, 0.5);
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.boveda__display span.lleno {
+  background: var(--dorado);
+  border-color: var(--dorado);
+  transform: scale(1.15);
+}
+.boveda__display.error { animation: sacudir 0.4s ease; }
+@keyframes sacudir {
+  25% { transform: translateX(-8px); }
+  50% { transform: translateX(7px); }
+  75% { transform: translateX(-4px); }
+}
+.boveda__pista {
+  font-size: 0.8rem;
+  font-style: italic;
+  color: var(--rosa-claro);
+  margin: 0.5rem 0 0;
+  min-height: 1em;
+}
+.boveda__teclado {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.4rem, 1.6vw, 0.55rem);
+  margin-top: 0.8rem;
+}
+.boveda__teclado button {
+  appearance: none;
+  border: 0;
+  height: clamp(38px, 10vw, 48px);
+  border-radius: 11px;
+  font-family: var(--fuente-cuerpo);
+  font-size: 1.15rem;
+  color: #fff;
+  background: linear-gradient(180deg, rgba(255,255,255,0.2), rgba(255,255,255,0.05) 55%, rgba(0,0,0,0.22));
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35), inset 0 1px 2px rgba(255, 255, 255, 0.25);
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.15s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.boveda__teclado button:active { transform: scale(0.94); background: rgba(212, 160, 86, 0.42); }
+.boveda__teclado button:focus-visible { outline: 2px solid var(--dorado); outline-offset: 2px; }
+.boveda__aux { font-size: 1.05rem !important; color: var(--dorado) !important; }
+
+@media (prefers-reduced-motion: reduce) {
+  .boveda.abriendo { animation: none; opacity: 0; visibility: hidden; transition: opacity 0.5s ease; }
+  .boveda.abriendo .boveda__manija { transition: none; }
+}
+
+/* Botón de música */
+.musica-toggle {
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 120;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  border: 0;
+  font-size: 1.1rem;
+  color: #fff;
+  background: rgba(122, 31, 61, 0.75);
+  box-shadow: var(--sombra);
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+.musica-toggle[hidden] { display: none; }
+.musica-toggle:hover { transform: scale(1.08); }
+.musica-toggle:focus-visible { outline: 3px solid var(--dorado); outline-offset: 2px; }
+.musica-toggle.is-muted { opacity: 0.55; }
+.musica-toggle.is-muted::after {
+  content: "";
+  position: absolute;
+  left: 6px; right: 6px; top: 50%;
+  height: 2px;
+  background: #fff;
+  transform: rotate(-45deg);
+}
+
+/* =========================================================
    Lightbox
    ========================================================= */
 .lightbox[hidden] { display: none; }

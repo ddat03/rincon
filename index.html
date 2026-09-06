@@ -26,6 +26,40 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
+  <!-- Bóveda de entrada (se muestra primero) -->
+  <div id="boveda" class="boveda" role="dialog" aria-modal="true" aria-label="Bóveda de entrada">
+    <div class="boveda__puerta">
+      <div class="boveda__anillo"></div>
+      <div class="boveda__manija" aria-hidden="true"></div>
+      <div class="boveda__panel">
+        <h2 class="boveda__titulo" data-config="boveda.titulo">Antes de entrar</h2>
+        <p class="boveda__instruccion" data-config="boveda.instruccion">Ingresa la clave de 4 dígitos</p>
+        <div class="boveda__display" id="bovedaDisplay" aria-live="polite">
+          <span></span><span></span><span></span><span></span>
+        </div>
+        <p class="boveda__pista" id="bovedaPista" hidden></p>
+        <div class="boveda__teclado" id="bovedaTeclado">
+          <button type="button" data-d="1">1</button>
+          <button type="button" data-d="2">2</button>
+          <button type="button" data-d="3">3</button>
+          <button type="button" data-d="4">4</button>
+          <button type="button" data-d="5">5</button>
+          <button type="button" data-d="6">6</button>
+          <button type="button" data-d="7">7</button>
+          <button type="button" data-d="8">8</button>
+          <button type="button" data-d="9">9</button>
+          <button type="button" class="boveda__aux" data-accion="borrar" aria-label="Borrar">⌫</button>
+          <button type="button" data-d="0">0</button>
+          <button type="button" class="boveda__aux" data-accion="ok" aria-label="Confirmar">✓</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <audio id="musica" loop preload="auto"></audio>
+  <button id="musicaToggle" class="musica-toggle" type="button" hidden
+          aria-label="Pausar o reanudar la música">♪</button>
+
   <!-- Navegación flotante -->
   <nav class="nav" aria-label="Secciones">
     <a href="#portada" data-label="Inicio" class="is-active"><span></span></a>

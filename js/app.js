@@ -44,6 +44,17 @@
     revelador.observe(el);
   }
 
+  /* ---------- "entrada" (se dispara al abrir la bóveda) ---------- */
+  var yaEntro = false;
+  var alEntrarCbs = [];
+  function alEntrar(fn) { if (yaEntro) fn(); else alEntrarCbs.push(fn); }
+  function dispararEntrada() {
+    if (yaEntro) return;
+    yaEntro = true;
+    alEntrarCbs.splice(0).forEach(function (f) { try { f(); } catch (e) { console.error(e); } });
+  }
+  var armarReanudarMusica = function () {};
+
   /* =========================================================
      CONFIG + textos generales
      ========================================================= */
@@ -243,14 +254,17 @@
       raf = requestAnimationFrame(frame);
     }
 
+    var entrado = false;
     function arrancar() {
+      if (!entrado) return;               // no animar hasta abrir la bóveda
       if (PREFIERE_MENOS_MOVIMIENTO) { dibujar(); return; }
       if (!animando) { animando = true; frame(); }
     }
     function parar() { animando = false; if (raf) cancelAnimationFrame(raf); }
 
+    animando = false;
     dimensionar();
-    if (PREFIERE_MENOS_MOVIMIENTO) dibujar(); else frame();
+    alEntrar(function () { entrado = true; arrancar(); });
 
     var reajuste;
     window.addEventListener('resize', function () {
@@ -269,6 +283,138 @@
         ents.forEach(function (e) { if (e.isIntersecting) arrancar(); else parar(); });
       }, { threshold: 0.02 }).observe($('#portada'));
     }
+  }
+
+  /* =========================================================
+     BÓVEDA de entrada — teclado de 4 dígitos
+     ========================================================= */
+  function iniciarBoveda(cfg) {
+    var b = $('#boveda');
+    if (!b) { dispararEntrada(); armarReanudarMusica(); return; }
+    var conf = (cfg && cfg.boveda) || {};
+    var codigo = String(conf.codigo || '0708').replace(/\D/g, '') || '0708';
+    var maxPista = conf.intentosParaPista || 3;
+    var display = $('#bovedaDisplay');
+    var puntos = $all('span', display);
+    var pista = $('#bovedaPista');
+    var teclado = $('#bovedaTeclado');
+    var entrado = '', intentos = 0, resuelto = false;
+
+    var recordado = false;
+    try { recordado = localStorage.getItem('nh_entrada') === '1'; } catch (e) {}
+    if (recordado) { b.hidden = true; dispararEntrada(); armarReanudarMusica(); return; }
+
+    document.body.style.overflow = 'hidden';
+
+    function render() {
+      puntos.forEach(function (p, i) { p.classList.toggle('lleno', i < entrado.length); });
+    }
+    function agregar(d) {
+      if (resuelto || entrado.length >= 4) return;
+      entrado += d;
+      render();
+      if (entrado.length === 4) setTimeout(verificar, 170);
+    }
+    function borrar() { if (!resuelto) { entrado = entrado.slice(0, -1); render(); } }
+    function verificar() {
+      if (entrado === codigo) { desbloquear(); return; }
+      intentos += 1;
+      display.classList.add('error');
+      setTimeout(function () {
+        display.classList.remove('error');
+        entrado = ''; render();
+      }, 430);
+      if (intentos >= maxPista && conf.pista) {
+        pista.textContent = conf.pista;
+        pista.hidden = false;
+      }
+    }
+    function desbloquear() {
+      resuelto = true;
+      try { localStorage.setItem('nh_entrada', '1'); } catch (e) {}
+      document.body.style.overflow = '';
+      b.classList.add('abriendo');
+      dispararEntrada();
+      var quitar = function () { b.hidden = true; };
+      b.addEventListener('animationend', quitar, { once: true });
+      setTimeout(quitar, 1500);
+    }
+
+    teclado.addEventListener('click', function (e) {
+      var btn = e.target.closest ? e.target.closest('button') : null;
+      if (!btn) return;
+      if (btn.getAttribute('data-d') != null) agregar(btn.getAttribute('data-d'));
+      else if (btn.getAttribute('data-accion') === 'borrar') borrar();
+      else if (btn.getAttribute('data-accion') === 'ok' && entrado.length === 4) verificar();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (b.hidden || resuelto) return;
+      if (/^[0-9]$/.test(e.key)) agregar(e.key);
+      else if (e.key === 'Backspace') borrar();
+      else if (e.key === 'Enter' && entrado.length === 4) verificar();
+    });
+    render();
+    var primer = $('button', teclado);
+    if (primer) { try { primer.focus(); } catch (e) {} }
+  }
+
+  /* =========================================================
+     MÚSICA de fondo
+     ========================================================= */
+  function iniciarMusica(cfg) {
+    var audio = $('#musica');
+    var toggle = $('#musicaToggle');
+    var conf = (cfg && cfg.musica) || {};
+    if (!audio || !toggle || !conf.archivo) return;
+
+    audio.src = conf.archivo;
+    audio.volume = 0;
+    var VOL = 0.55;
+    var quiereSonar = true;
+    try { if (localStorage.getItem('nh_musica') === 'off') quiereSonar = false; } catch (e) {}
+
+    function fundir() {
+      var v = audio.volume;
+      var id = setInterval(function () {
+        v += 0.035;
+        audio.volume = Math.min(VOL, v);
+        if (v >= VOL || audio.paused) clearInterval(id);
+      }, 110);
+    }
+    function tocar() {
+      var p = audio.play();
+      if (p && p.then) p.then(fundir).catch(function () {});
+      else fundir();
+    }
+    function pintar() { toggle.classList.toggle('is-muted', audio.paused); }
+
+    toggle.addEventListener('click', function () {
+      if (audio.paused) {
+        quiereSonar = true; tocar();
+        try { localStorage.setItem('nh_musica', 'on'); } catch (e) {}
+      } else {
+        audio.pause(); quiereSonar = false;
+        try { localStorage.setItem('nh_musica', 'off'); } catch (e) {}
+      }
+      pintar();
+    });
+
+    armarReanudarMusica = function () {
+      toggle.hidden = false;
+      pintar();
+      var unaVez = function () {
+        if (quiereSonar && audio.paused) tocar();
+        setTimeout(pintar, 50);
+        document.removeEventListener('pointerdown', unaVez);
+      };
+      document.addEventListener('pointerdown', unaVez);
+    };
+
+    alEntrar(function () {
+      toggle.hidden = false;
+      if (quiereSonar) tocar();
+      setTimeout(pintar, 60);
+    });
   }
 
   /* =========================================================
@@ -609,10 +755,18 @@
     construirLightbox();
     $all('.titulo-seccion').forEach(function (t) { t.classList.add('reveal'); revelar(t); });
 
-    cargarJSON('data/config.json').then(aplicarConfig).catch(function (e) {
+    cargarJSON('data/config.json').then(function (cfg) {
+      aplicarConfig(cfg);
+      iniciarMusica(cfg);
+      iniciarBoveda(cfg);
+    }).catch(function (e) {
       mostrarErrorGlobal(e);
       iniciarContador('2025-01-07');
+      iniciarBoveda(null);
     });
+
+    // red de seguridad: si algo tarda demasiado, no dejar la bóveda trabada
+    setTimeout(function () { if (!yaEntro && !$('#boveda')) dispararEntrada(); }, 8000);
 
     cargarJSON('data/carta.json').then(iniciarCarta).catch(mostrarErrorGlobal);
 

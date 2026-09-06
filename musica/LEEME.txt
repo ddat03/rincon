@@ -1,0 +1,9 @@
+Poné acá el archivo de música de fondo con el nombre  cancion.mp3
+(o cambiá la ruta en data/config.json -> musica.archivo).
+
+Recomendaciones:
+- Que sea liviano: MP3 ~128 kbps, idealmente < 4 MB. Una canción de 3-4 min está bien.
+- Ojo con los derechos de autor: el repo de GitHub Pages es PÚBLICO. Mejor una
+  canción propia, una versión instrumental libre, o algo con licencia libre.
+- Empieza sola cuando ella mete la clave en la bóveda (ese toque desbloquea el
+  autoplay del navegador). Hay un botón abajo a la izquierda para silenciarla.
