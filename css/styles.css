@@ -24,7 +24,7 @@
 
 * { box-sizing: border-box; }
 
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
@@ -538,6 +538,7 @@ h1, h2, h3 { font-family: var(--fuente-titulo); font-weight: 600; line-height: 1
   perspective: 1300px;
   perspective-origin: 50% 45%;
   touch-action: pan-y;
+  overflow: hidden;          /* las fotos que giran a los lados no deben desbordar la página */
 }
 .carrusel3d__giro {
   position: absolute;
