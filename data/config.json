@@ -15,7 +15,8 @@
   },
   "musica": {
     "archivo": "musica/cancion.mp3",
-    "titulo": ""
+    "titulo": "Touching Story",
+    "credito": "Música: \"Touching Story\" — Kevin MacLeod (incompetech.com) · Licencia CC BY 4.0"
   },
   "cierre": {
     "titulo": "Y esto apenas empieza",

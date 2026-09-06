@@ -88,8 +88,12 @@ sitio, o cambiando la clave en el JSON).
 
 La **música** va en `musica/cancion.mp3` (o cambiá `musica.archivo`). Empieza sola
 porque el toque en el teclado de la bóveda cuenta como interacción y desbloquea el
-autoplay del navegador. Hay un botón abajo a la izquierda para silenciarla. Ver
-`musica/LEEME.txt` (ojo con canciones con copyright en un repo público).
+autoplay del navegador. Hay un botón abajo a la izquierda para silenciarla.
+
+Ahora suena **"Touching Story" de Kevin MacLeod** (incompetech.com), licencia
+**CC BY 4.0** — el crédito aparece chico en la pantalla de cierre
+(`config.json` → `musica.credito`). Si la cambiás, actualizá ese texto. Ver
+`musica/LEEME.txt`. Ojo con canciones con copyright: el repo es público.
 
 ## Publicar en GitHub Pages
 

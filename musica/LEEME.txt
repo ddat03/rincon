@@ -1,9 +1,17 @@
-Poné acá el archivo de música de fondo con el nombre  cancion.mp3
-(o cambiá la ruta en data/config.json -> musica.archivo).
+Música de fondo: musica/cancion.mp3
 
-Recomendaciones:
-- Que sea liviano: MP3 ~128 kbps, idealmente < 4 MB. Una canción de 3-4 min está bien.
-- Ojo con los derechos de autor: el repo de GitHub Pages es PÚBLICO. Mejor una
-  canción propia, una versión instrumental libre, o algo con licencia libre.
-- Empieza sola cuando ella mete la clave en la bóveda (ese toque desbloquea el
-  autoplay del navegador). Hay un botón abajo a la izquierda para silenciarla.
+Ahora mismo suena:
+  "Touching Story" — Kevin MacLeod (incompetech.com)
+  Licencia: Creative Commons BY 4.0  (https://creativecommons.org/licenses/by/4.0/)
+  Pieza de piano suave, ~66 s en loop. Descargada de incompetech.com y
+  recomprimida a 128 kbps (~1.3 MB).
+
+El crédito CC-BY aparece chiquito en la pantalla de cierre (campo
+data/config.json -> musica.credito). Si cambiás la canción, actualizá ese texto
+(o dejalo vacío si la nueva no pide atribución).
+
+Para cambiarla:
+- Reemplazá musica/cancion.mp3 por tu archivo (mismo nombre), o
+- cambiá la ruta en data/config.json -> musica.archivo
+- MP3 liviano (128 kbps alcanza), ojo con copyright: el repo es público.
+- Empieza sola cuando ella mete la clave en la bóveda. Botón abajo-izq para silenciar.

@@ -870,6 +870,12 @@ h1, h2, h3 { font-family: var(--fuente-titulo); font-weight: 600; line-height: 1
   color: rgba(255, 255, 255, 0.4);
   letter-spacing: 0.05em;
 }
+.firma-autor--credito {
+  margin-top: 0.4rem;
+  font-size: 0.68rem;
+  color: rgba(255, 255, 255, 0.3);
+}
+.firma-autor--credito:empty { display: none; }
 
 /* Estado de carga / error de datos */
 .cargando, .error-datos {
